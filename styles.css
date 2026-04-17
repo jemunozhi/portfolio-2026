@@ -1,0 +1,237 @@
+:root {
+  /* Figma tokens */
+  /* color/background/surface/default/default */
+  --color-background-surface-default-default: #f7f2ec;
+  /* color/content/text/default/default */
+  --color-content-text-default-default: #202020;
+  /* color/content/text/default/subtle */
+  --color-content-text-default-subtle: #808080;
+
+  /* viewport/typography/body/default/small/default/* */
+  --viewport-typography-body-default-small-default-font-family: "Montserrat";
+  --viewport-typography-body-default-small-default-font-weight: 400;
+  --viewport-typography-body-default-small-default-font-size: 14px;
+  --viewport-typography-body-default-small-default-line-height: 20px;
+  --viewport-typography-body-default-small-default-letter-spacing: 0;
+
+  /* spacing tokens */
+  --spacing-24: 24px;
+  --spacing-40: 40px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+.viewport-grid {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--color-background-surface-default-default);
+}
+
+.main-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-inline: var(--spacing-40);
+  overflow: clip;
+}
+
+.main {
+  position: relative;
+  min-width: 0;
+  flex: 1 0 0;
+  height: 100%;
+  overflow: clip;
+}
+
+.header-logo-jm-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+}
+
+.header-logo-jm {
+  width: 80px;
+  height: 80px;
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 180ms ease, transform 180ms ease;
+  transform-origin: center;
+  animation:
+    logo-intro 700ms ease-out 0s both,
+    logo-forms-to-hover 180ms ease 2.8s forwards;
+}
+
+.header-logo-jm-square {
+  position: absolute;
+  inset: 33.33%;
+  background: var(--color-content-text-default-default);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 180ms ease, transform 180ms ease;
+  transform-origin: center;
+  animation:
+    logo-square-to-hover 180ms ease 2.8s forwards,
+    caret-blink 1s steps(1, end) 2980ms infinite;
+}
+
+@keyframes logo-intro {
+  0% {
+    transform: scale(0.35);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes logo-forms-to-hover {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes logo-square-to-hover {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.status-text {
+  position: absolute;
+  top: calc(50% + 40px + var(--spacing-24));
+  left: 50%;
+  margin: 0;
+  text-align: center;
+  color: var(--color-content-text-default-subtle);
+  font-family: var(--viewport-typography-body-default-small-default-font-family), sans-serif;
+  font-weight: var(--viewport-typography-body-default-small-default-font-weight);
+  font-size: var(--viewport-typography-body-default-small-default-font-size);
+  line-height: var(--viewport-typography-body-default-small-default-line-height);
+  letter-spacing: var(--viewport-typography-body-default-small-default-letter-spacing);
+  opacity: 0;
+  transform: translateX(-50%) scale(0.96);
+  transform-origin: center;
+  animation: text-intro 280ms ease-out 700ms both;
+}
+
+.ellipsis {
+  display: none;
+}
+
+.ellipsis span {
+  opacity: 0;
+  animation: ellipsis-dot 1.2s infinite;
+}
+
+.ellipsis span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.ellipsis span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ellipsis span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes ellipsis-dot {
+  0%,
+  20% {
+    opacity: 0;
+  }
+
+  40%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes text-intro {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* laptop (1439px - 1240px) */
+@media (min-width: 1240px) and (max-width: 1439px) {
+  .main-container {
+    padding-inline: 36px;
+  }
+}
+
+/* tablet-lg (1239px - 905px) */
+@media (min-width: 905px) and (max-width: 1239px) {
+  .main-container {
+    padding-inline: 32px;
+  }
+}
+
+/* tablet-sm (904px - 600px) */
+@media (min-width: 600px) and (max-width: 904px) {
+  .main-container {
+    height: 100vh;
+    padding-inline: 24px;
+  }
+}
+
+/* mobile (599px - 0px) */
+@media (max-width: 599px) {
+  .main-container {
+    height: 100vh;
+    padding-inline: 16px;
+  }
+
+  .status-text {
+    font-size: 13px;
+    line-height: 18px;
+  }
+}
