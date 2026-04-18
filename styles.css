@@ -170,12 +170,14 @@ body {
   position: absolute;
   left: 50%;
   bottom: 40px;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-8);
   border-radius: var(--border-radii-2xs);
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  animation: cta-intro 360ms ease-out 4980ms both;
 }
 
 .cta__caption {
@@ -436,6 +438,18 @@ body {
   100% {
     opacity: 1;
     transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes cta-intro {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
 
