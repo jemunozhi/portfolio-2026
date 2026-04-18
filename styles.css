@@ -6,6 +6,8 @@
   --color-content-text-default-default: #202020;
   /* color/content/text/default/subtle */
   --color-content-text-default-subtle: #808080;
+  /* color/content/icon/default/knockout */
+  --color-content-icon-default-knockout: #ffffff;
 
   /* viewport/typography/body/default/small/default/* */
   --viewport-typography-body-default-small-default-font-family: "Montserrat";
@@ -15,8 +17,15 @@
   --viewport-typography-body-default-small-default-letter-spacing: 0;
 
   /* spacing tokens */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
   --spacing-24: 24px;
   --spacing-40: 40px;
+
+  /* border tokens */
+  --border-radii-2xs: 8px;
+  --border-radii-4xs: 4px;
+  --border-weight-medium: 2px;
 }
 
 * {
@@ -155,6 +164,234 @@ body {
   transform: translateX(-50%) scale(0.96);
   transform-origin: center;
   animation: text-intro 280ms ease-out 700ms both;
+}
+
+.cta {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  border-radius: var(--border-radii-2xs);
+}
+
+.cta__caption {
+  margin: 0;
+  color: var(--color-content-text-default-subtle);
+  font-family: var(--viewport-typography-body-default-small-default-font-family), sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.button-icon-final {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 0;
+  border-radius: var(--border-radii-4xs);
+  background: transparent;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+}
+
+.button-icon-final__state-layer {
+  display: flex;
+  align-items: center;
+}
+
+.button-icon-final[data-size="default"] .button-icon-final__state-layer {
+  padding: var(--spacing-4);
+}
+
+.button-icon-final[data-size="small"] .button-icon-final__state-layer {
+  padding: 3px;
+}
+
+.button-icon-final__icon {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+}
+
+.button-icon-final[data-size="default"] .button-icon-final__icon {
+  width: 24px;
+  height: 24px;
+}
+
+.button-icon-final[data-size="small"] .button-icon-final__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.button-icon-final__icon-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.button-icon-final:is([data-state="pressed"], [data-state="active"], [data-state="enabled"]:active)
+  .button-icon-final__icon-image {
+  /* social-icon_linkedin.svg base fill is dark (#505050), force knockout in pressed state */
+  filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.button-icon-final[data-tone="default"]:is([data-state="active"], [data-state="pressed"]) {
+  background: #3e3d3b;
+}
+
+.button-icon-final[data-tone="inverse"]:is([data-state="active"], [data-state="pressed"]) {
+  background: #fff;
+}
+
+.button-icon-final:is([data-state="disabled"], :disabled, [aria-disabled="true"]) {
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+
+.button-icon-final[data-tone="default"][data-state="hovered"] .button-icon-final__state-layer {
+  background: rgb(32 32 32 / 8%);
+}
+
+.button-icon-final[data-tone="default"][data-state="focused"] .button-icon-final__state-layer {
+  background: rgb(32 32 32 / 12%);
+}
+
+.button-icon-final[data-tone="inverse"][data-state="hovered"] .button-icon-final__state-layer {
+  background: rgb(207 207 207 / 8%);
+}
+
+.button-icon-final[data-tone="inverse"][data-state="focused"] .button-icon-final__state-layer {
+  background: rgb(207 207 207 / 12%);
+}
+
+.button-icon-final[data-state="enabled"][data-tone="default"]:hover .button-icon-final__state-layer {
+  background: rgb(32 32 32 / 8%);
+}
+
+.button-icon-final[data-state="enabled"][data-tone="default"]:focus-visible .button-icon-final__state-layer {
+  background: rgb(32 32 32 / 12%);
+}
+
+.button-icon-final[data-state="enabled"][data-tone="inverse"]:hover .button-icon-final__state-layer {
+  background: rgb(207 207 207 / 8%);
+}
+
+.button-icon-final[data-state="enabled"][data-tone="inverse"]:focus-visible .button-icon-final__state-layer {
+  background: rgb(207 207 207 / 12%);
+}
+
+.button-icon-final[data-tone="default"][data-state="focused"][data-size="default"] {
+  border: var(--border-weight-medium) solid #707070;
+}
+
+.button-icon-final[data-tone="inverse"][data-state="focused"][data-size="default"] {
+  border: var(--border-weight-medium) solid #fff;
+}
+
+.button-icon-final[data-tone="default"][data-state="focused"][data-size="small"] {
+  border: 1.5px solid #707070;
+}
+
+.button-icon-final[data-tone="inverse"][data-state="focused"][data-size="small"] {
+  border: 1.5px solid #fff;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="default"][data-size="default"]:focus-visible {
+  border: var(--border-weight-medium) solid #707070;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="inverse"][data-size="default"]:focus-visible {
+  border: var(--border-weight-medium) solid #fff;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="default"][data-size="small"]:focus-visible {
+  border: 1.5px solid #707070;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="inverse"][data-size="small"]:focus-visible {
+  border: 1.5px solid #fff;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="default"]:active {
+  background: #3e3d3b;
+}
+
+.button-icon-final[data-state="enabled"][data-tone="inverse"]:active {
+  background: #fff;
+}
+
+.button-icon-final[data-size="default"]:is(
+    [data-tone="default"][data-state="enabled"],
+    [data-tone="default"][data-state="hovered"],
+    [data-tone="default"][data-state="focused"],
+    [data-tone="default"][data-state="disabled"],
+    [data-tone="inverse"][data-state="active"],
+    [data-tone="inverse"][data-state="pressed"]
+  )
+  .button-icon-final__icon-image--default-dark {
+  display: block;
+}
+
+.button-icon-final[data-size="default"]:is(
+    [data-tone="default"][data-state="active"],
+    [data-tone="default"][data-state="pressed"],
+    [data-tone="inverse"][data-state="enabled"],
+    [data-tone="inverse"][data-state="hovered"],
+    [data-tone="inverse"][data-state="focused"],
+    [data-tone="inverse"][data-state="disabled"]
+  )
+  .button-icon-final__icon-image--default-light {
+  display: block;
+}
+
+.button-icon-final[data-size="small"]:is(
+    [data-tone="default"][data-state="enabled"],
+    [data-tone="default"][data-state="hovered"],
+    [data-tone="default"][data-state="focused"],
+    [data-tone="default"][data-state="disabled"],
+    [data-tone="inverse"][data-state="active"],
+    [data-tone="inverse"][data-state="pressed"]
+  )
+  .button-icon-final__icon-image--small-dark {
+  display: block;
+}
+
+.button-icon-final[data-size="small"]:is(
+    [data-tone="default"][data-state="active"],
+    [data-tone="default"][data-state="pressed"],
+    [data-tone="inverse"][data-state="enabled"],
+    [data-tone="inverse"][data-state="hovered"],
+    [data-tone="inverse"][data-state="focused"],
+    [data-tone="inverse"][data-state="disabled"]
+  )
+  .button-icon-final__icon-image--small-light {
+  display: block;
+}
+
+.button-icon-final[data-state="enabled"][data-size="default"][data-tone="default"]:active .button-icon-final__icon-image--default-dark,
+.button-icon-final[data-state="enabled"][data-size="default"][data-tone="inverse"]:active .button-icon-final__icon-image--default-light,
+.button-icon-final[data-state="enabled"][data-size="small"][data-tone="default"]:active .button-icon-final__icon-image--small-dark,
+.button-icon-final[data-state="enabled"][data-size="small"][data-tone="inverse"]:active .button-icon-final__icon-image--small-light {
+  display: none;
+}
+
+.button-icon-final[data-state="enabled"][data-size="default"][data-tone="default"]:active .button-icon-final__icon-image--default-light,
+.button-icon-final[data-state="enabled"][data-size="default"][data-tone="inverse"]:active .button-icon-final__icon-image--default-dark,
+.button-icon-final[data-state="enabled"][data-size="small"][data-tone="default"]:active .button-icon-final__icon-image--small-light,
+.button-icon-final[data-state="enabled"][data-size="small"][data-tone="inverse"]:active .button-icon-final__icon-image--small-dark {
+  display: block;
 }
 
 .ellipsis {
