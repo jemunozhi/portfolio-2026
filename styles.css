@@ -23,6 +23,7 @@
   --spacing-40: 40px;
 
   /* border tokens */
+  --border-radii-full: 1000px;
   --border-radii-2xs: 8px;
   --border-radii-4xs: 4px;
   --border-weight-medium: 2px;
@@ -158,18 +159,31 @@ body {
   position: absolute;
   top: calc(50% + 40px + var(--spacing-24));
   left: 50%;
-  margin: 0;
   text-align: center;
   color: var(--color-content-text-default-subtle);
-  font-family: var(--viewport-typography-body-default-small-default-font-family), sans-serif;
-  font-weight: var(--viewport-typography-body-default-small-default-font-weight);
-  font-size: var(--viewport-typography-body-default-small-default-font-size);
-  line-height: var(--viewport-typography-body-default-small-default-line-height);
-  letter-spacing: var(--viewport-typography-body-default-small-default-letter-spacing);
+  white-space: nowrap;
   opacity: 0;
   transform: translateX(-50%) scale(0.96);
   transform-origin: center;
   animation: text-intro 280ms ease-out 700ms both;
+}
+
+.status-text__primary,
+.status-text__secondary {
+  margin: 0;
+  font-family: var(--viewport-typography-body-default-small-default-font-family), sans-serif;
+  font-size: var(--viewport-typography-body-default-small-default-font-size);
+  line-height: var(--viewport-typography-body-default-small-default-line-height);
+  letter-spacing: var(--viewport-typography-body-default-small-default-letter-spacing);
+}
+
+.status-text__primary {
+  font-weight: 500;
+}
+
+.status-text__secondary {
+  font-weight: var(--viewport-typography-body-default-small-default-font-weight);
+  font-style: italic;
 }
 
 .cta {
@@ -204,7 +218,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   border: 0;
-  border-radius: var(--border-radii-4xs);
+  border-radius: var(--border-radii-full);
   background: transparent;
   overflow: hidden;
   padding: 0;
@@ -214,6 +228,7 @@ body {
 .button-icon-final__state-layer {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .button-icon-final[data-size="default"] .button-icon-final__state-layer {
@@ -221,7 +236,7 @@ body {
 }
 
 .button-icon-final[data-size="small"] .button-icon-final__state-layer {
-  padding: 3px;
+  padding: var(--spacing-4);
 }
 
 .button-icon-final__icon {
@@ -231,13 +246,13 @@ body {
 }
 
 .button-icon-final[data-size="default"] .button-icon-final__icon {
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
 }
 
 .button-icon-final[data-size="small"] .button-icon-final__icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .button-icon-final__icon-image {
