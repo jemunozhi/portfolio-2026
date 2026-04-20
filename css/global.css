@@ -165,8 +165,9 @@ body {
   color: var(--color-content-text-default-subtle);
   white-space: nowrap;
   opacity: 0;
-  transform: translateX(-50%) scale(0.96);
+  transform: translateX(-50%) scale(1);
   transform-origin: center;
+  will-change: transform, opacity;
   animation: text-intro 280ms ease-out 700ms both;
 }
 
@@ -198,7 +199,8 @@ body {
   gap: var(--spacing-8);
   border-radius: var(--border-radii-2xs);
   opacity: 0;
-  transform: translate(-50%, 8px);
+  transform: translate(-50%, 0);
+  will-change: transform, opacity;
   animation: cta-intro 360ms ease-out 4980ms both;
 }
 
