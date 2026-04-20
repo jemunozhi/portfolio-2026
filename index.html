@@ -3,69 +3,127 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#f7f2ec" />
+    <meta name="theme-color" content="#f9f5f1" />
     <title>Julian Munoz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
     <link rel="stylesheet" href="./css/global.css" />
+    <link rel="stylesheet" href="./css/home.css" />
   </head>
-  <body>
-    <main class="viewport-grid" aria-label="Uploading portfolio screen">
-      <section class="main-container">
-        <div class="main">
-          <div class="header-logo-jm-wrap">
+  <body class="home-body">
+    <main class="home-page" aria-label="Portfolio homepage">
+      <section class="home-shell">
+        <header class="home-header" aria-label="Main header">
+          <a class="home-brand" href="./index.html" aria-label="Julian Munoz home">
             <img
-              class="header-logo-jm"
-              src="https://www.figma.com/api/mcp/asset/66b431b1-030f-46b2-b648-1cd11be5d9a1"
+              class="home-brand__logo"
+              src="https://www.figma.com/api/mcp/asset/d47eb65e-fcda-479e-8f67-1a8ba6a85bde"
               alt="JM logo"
-              width="80"
-              height="80"
+              width="32"
+              height="32"
             />
-            <span class="header-logo-jm-square" aria-hidden="true"></span>
+          </a>
+          <div class="home-header__actions" aria-label="Quick actions">
+            <button class="icon-button icon-button--mail" type="button" aria-label="Email">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5v-9Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="m5 8 6.03 4.26a1.67 1.67 0 0 0 1.94 0L19 8"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </button>
+            <button class="icon-button icon-button--theme" type="button" aria-label="Theme">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M14.64 3.45a8.5 8.5 0 1 0 5.91 11.91A7 7 0 0 1 14.64 3.45Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </button>
           </div>
-          <div class="status-text" aria-live="polite">
-            <p class="status-text__primary">Portfolio taking shape</p>
-            <p class="status-text__secondary">More is coming.</p>
-          </div>
-          <div class="cta" aria-label="Secondary call to action">
-            <a
-              class="button-icon-final"
-              href="https://www.linkedin.com/in/jemunozhi/"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-tone="default"
-              data-size="small"
-              data-state="enabled"
-              aria-label="Open LinkedIn profile"
-            >
-              <span class="button-icon-final__state-layer">
-                <span class="button-icon-final__icon" aria-hidden="true">
-                  <img
-                    class="button-icon-final__icon-image button-icon-final__icon-image--default-dark"
-                    src="./assets/social-icon_linkedin.svg"
-                    alt=""
-                  />
-                  <img
-                    class="button-icon-final__icon-image button-icon-final__icon-image--default-light"
-                    src="./assets/social-icon_linkedin.svg"
-                    alt=""
-                  />
-                  <img
-                    class="button-icon-final__icon-image button-icon-final__icon-image--small-dark"
-                    src="./assets/social-icon_linkedin.svg"
-                    alt=""
-                  />
-                  <img
-                    class="button-icon-final__icon-image button-icon-final__icon-image--small-light"
-                    src="./assets/social-icon_linkedin.svg"
-                    alt=""
-                  />
-                </span>
-              </span>
-            </a>
-            <p class="cta__caption">Start exploring here.</p>
-          </div>
+        </header>
+
+        <div class="home-grid">
+          <section class="home-about" aria-label="About Julian Munoz">
+            <div class="greeting-message">
+              <p class="greeting-message__title">Good morning.</p>
+              <p class="greeting-message__subtitle">Fresh eyes on sharp work.</p>
+            </div>
+
+            <div class="home-description">
+              <p>
+                I’m <span class="home-description__name">Julian Munoz</span>, a designer shaping systems,
+                strategy, quality and value of what gets built.
+              </p>
+              <p>
+                I’m currently @endava working at the intersection of design, business and technology. I turn
+                complexity into clarity and clarity into scalable, high-impact solutions. I care as much about how
+                things are made as why they matter, bringing craft, consistency and systems thinking into the process,
+                with a close eye on how AI is evolving it.
+              </p>
+              <p>
+                I’m focused on building teams, systems and practices that raise the bar and deliver lasting value.
+              </p>
+            </div>
+
+            <a class="more-about-link" href="#" aria-label="More about me">More About Me</a>
+          </section>
+
+          <section class="home-projects" aria-label="Case studies">
+            <ol class="project-list" id="project-list"></ol>
+          </section>
+
+          <footer class="home-footer" aria-label="Footer">
+            <div class="home-footer__icons" aria-label="Social links">
+              <a
+                class="icon-button icon-button--social"
+                href="https://www.behance.net/jemunozhi"
+                aria-label="Behance"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="./assets/images/home/social-icon_behance.svg" alt="" aria-hidden="true" />
+              </a>
+
+              <a
+                class="icon-button icon-button--social"
+                href="https://www.linkedin.com/in/jemunozhi/"
+                aria-label="LinkedIn"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="./assets/images/home/social-icon_linkedin.svg" alt="" aria-hidden="true" />
+              </a>
+
+              <a
+                class="icon-button icon-button--social"
+                href="https://medium.com/@jemunozhi"
+                aria-label="Medium"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="./assets/images/home/social-icon_medium.svg" alt="" aria-hidden="true" />
+              </a>
+            </div>
+
+            <p class="home-footer__meta">Human-designed. AI vibe-coded. <span aria-hidden="true">•</span> © 2025 All rights reserved</p>
+          </footer>
         </div>
       </section>
     </main>
+    <script src="./data/projects.js"></script>
+    <script src="./js/home.js"></script>
   </body>
 </html>
