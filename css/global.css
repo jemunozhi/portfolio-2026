@@ -9,6 +9,11 @@
   /* color/content/icon/default/knockout */
   --color-content-icon-default-knockout: #ffffff;
 
+  /* cursor assets */
+  --cursor-default: url("../assets/cursors/cursor_default-default.svg") 8 6, auto;
+  --cursor-default-hovered: url("../assets/cursors/cursor_default-hovered.svg") 8 6, pointer;
+  --cursor-inverse-hovered: url("../assets/cursors/cursor_inverse-hovered.svg") 8 6, pointer;
+
   /* viewport/typography/body/default/small/default/* */
   --viewport-typography-body-default-small-default-font-family: "Montserrat";
   --viewport-typography-body-default-small-default-font-weight: 400;
@@ -42,6 +47,24 @@ body {
   overflow-y: auto;
   overscroll-behavior-y: auto;
   background: var(--color-background-surface-default-default);
+  cursor: var(--cursor-default);
+}
+
+a,
+button,
+[role="button"],
+summary,
+label {
+  cursor: var(--cursor-default);
+}
+
+a:hover,
+button:hover,
+[role="button"]:hover,
+summary:hover,
+label:hover,
+.home-description p:hover {
+  cursor: var(--cursor-default-hovered);
 }
 
 .viewport-grid {
@@ -224,7 +247,7 @@ body {
   background: transparent;
   overflow: hidden;
   padding: 0;
-  cursor: pointer;
+  cursor: var(--cursor-default);
 }
 
 .button-icon-final__state-layer {
@@ -281,7 +304,7 @@ body {
 
 .button-icon-final:is([data-state="disabled"], :disabled, [aria-disabled="true"]) {
   opacity: 0.2;
-  cursor: default;
+  cursor: var(--cursor-default);
   pointer-events: none;
 }
 

@@ -11,14 +11,14 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;1,400&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./assets/brand/favicon.svg" />
     <link rel="stylesheet" href="./css/global.css" />
     <link rel="stylesheet" href="./css/home.css" />
   </head>
   <body class="home-body">
     <main class="home-page" aria-label="Portfolio homepage">
       <section class="home-shell">
-        <header class="home-header" aria-label="Main header">
+        <header class="home-header home-header--intro" aria-label="Main header">
           <a class="home-brand" href="./index.html" aria-label="Julian Munoz home">
             <img
               class="home-brand__logo"
@@ -58,34 +58,46 @@
         <div class="home-grid">
           <section class="home-about" aria-label="About Julian Munoz">
             <div class="greeting-message">
-              <p class="greeting-message__title">Good morning.</p>
-              <p class="greeting-message__subtitle">Fresh eyes on sharp work.</p>
+              <p class="greeting-message__title home-about__reveal-mask">
+                <span class="home-about__reveal-line" data-reveal-group="intro" style="--reveal-index: 0">Good morning.</span>
+              </p>
+              <p class="greeting-message__subtitle home-about__reveal-mask">
+                <span class="home-about__reveal-line" data-reveal-group="intro" style="--reveal-index: 1">Fresh eyes on sharp work.</span>
+              </p>
             </div>
 
             <div class="home-description">
-              <p>
-                I’m <span class="home-description__name">Julian Munoz</span>, a designer shaping systems,
-                strategy, quality and value of what gets built.
+              <p class="home-about__reveal-mask">
+                <span class="home-about__reveal-line" style="--reveal-index: 2">
+                  I’m <span class="home-description__name">Julian Munoz</span>, a designer shaping systems,
+                  strategy, quality and value of what gets built.
+                </span>
               </p>
-              <p>
-                I’m currently @endava working at the intersection of design, business and technology. I turn
-                complexity into clarity and clarity into scalable, high-impact solutions. I care as much about how
-                things are made as why they matter, bringing craft, consistency and systems thinking into the process,
-                with a close eye on how AI is evolving it.
+              <p class="home-about__reveal-mask">
+                <span class="home-about__reveal-line" style="--reveal-index: 3">
+                  I’m currently @endava working at the intersection of design, business and technology. I turn
+                  complexity into clarity and clarity into scalable, high-impact solutions. I care as much about how
+                  things are made as why they matter, bringing craft, consistency and systems thinking into the process,
+                  with a close eye on how AI is evolving it.
+                </span>
               </p>
-              <p>
-                I’m focused on building teams, systems and practices that raise the bar and deliver lasting value.
+              <p class="home-about__reveal-mask">
+                <span class="home-about__reveal-line" style="--reveal-index: 4">
+                  I’m focused on building teams, systems and practices that raise the bar and deliver lasting value.
+                </span>
               </p>
             </div>
 
-            <a class="more-about-link" href="#" aria-label="More about me">More About Me</a>
+            <a class="more-about-link home-about__reveal-mask" href="#" aria-label="More about me">
+              <span class="home-about__reveal-line home-about__reveal-line--inline" style="--reveal-index: 5">More About Me</span>
+            </a>
           </section>
 
-          <section class="home-projects" aria-label="Case studies">
+          <section class="home-projects home-projects--delayed" aria-label="Case studies">
             <ol class="project-list" id="project-list"></ol>
           </section>
 
-          <footer class="home-footer" aria-label="Footer">
+          <footer class="home-footer home-footer--intro" aria-label="Footer">
             <div class="home-footer__icons" aria-label="Social links">
               <a
                 class="icon-button icon-button--social"
@@ -94,7 +106,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src="./assets/images/home/social-icon_behance.svg" alt="" aria-hidden="true" />
+                <img src="./assets/icons/social/social-icon_behance.svg" alt="" aria-hidden="true" />
               </a>
 
               <a
@@ -104,7 +116,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src="./assets/images/home/social-icon_linkedin.svg" alt="" aria-hidden="true" />
+                <img src="./assets/icons/social/social-icon_linkedin.svg" alt="" aria-hidden="true" />
               </a>
 
               <a
@@ -114,11 +126,11 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src="./assets/images/home/social-icon_medium.svg" alt="" aria-hidden="true" />
+                <img src="./assets/icons/social/social-icon_medium.svg" alt="" aria-hidden="true" />
               </a>
             </div>
 
-            <p class="home-footer__meta">Human-designed. AI vibe-coded. <span aria-hidden="true">•</span> © 2025 All rights reserved</p>
+            <p class="home-footer__meta">Human-designed. AI vibe-coded. <span aria-hidden="true">•</span> © 2026 All rights reserved</p>
           </footer>
         </div>
       </section>
