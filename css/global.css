@@ -62,8 +62,7 @@ a:hover,
 button:hover,
 [role="button"]:hover,
 summary:hover,
-label:hover,
-.home-description p:hover {
+label:hover {
   cursor: var(--cursor-default-hovered);
 }
 
@@ -264,6 +263,132 @@ label:hover,
   padding: var(--spacing-4);
 }
 
+.button-icon-final__content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.button-icon-final__label {
+  display: inline-block;
+  font-family: var(--viewport-typography-body-default-small-default-font-family), sans-serif;
+  font-weight: var(--viewport-typography-body-default-small-default-font-weight);
+  font-size: var(--viewport-typography-body-default-small-default-font-size);
+  line-height: var(--viewport-typography-body-default-small-default-line-height);
+  letter-spacing: var(--viewport-typography-body-default-small-default-letter-spacing);
+  white-space: nowrap;
+  color: inherit;
+}
+
+.button-icon-final--email .button-icon-final__content {
+  gap: 0;
+}
+
+.button-icon-final--email .button-icon-final__state-layer {
+  border-radius: var(--border-radii-full);
+  transition:
+    padding 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 160ms ease 140ms;
+}
+
+.button-icon-final--email .button-icon-final__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(2px);
+  transform: translateX(-1px);
+  transition:
+    max-width 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 160ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 220ms ease,
+    visibility 0s linear 220ms;
+}
+
+.button-icon-final--email .button-icon-final__label .home-about__word {
+  display: inline-block;
+  opacity: 0;
+  transform: translate3d(0, 0.35em, 0);
+  animation: none;
+  transition:
+    opacity 140ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.button-icon-final--email .button-icon-final__label .home-about__word-inner {
+  display: inline-block;
+}
+
+.button-icon-final--email:is(
+    :hover,
+    :focus-visible,
+    :active,
+    [data-state="hovered"],
+    [data-state="focused"],
+    [data-state="active"],
+    [data-state="pressed"]
+  )
+  .button-icon-final__state-layer {
+  padding: 4px 4px 4px 10px;
+  transition-delay: 0ms, 0ms;
+}
+
+.button-icon-final--email:is(
+    :hover,
+    :focus-visible,
+    :active,
+    [data-state="hovered"],
+    [data-state="focused"],
+    [data-state="active"],
+    [data-state="pressed"]
+  )
+  .button-icon-final__content {
+  gap: var(--spacing-8);
+}
+
+.button-icon-final--email:is(
+    :hover,
+    :focus-visible,
+    :active,
+    [data-state="hovered"],
+    [data-state="focused"],
+    [data-state="active"],
+    [data-state="pressed"]
+  )
+  .button-icon-final__label {
+  max-width: 12ch;
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+  transform: translateX(0);
+  transition:
+    max-width 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 220ms ease,
+    visibility 0s linear 0s;
+}
+
+.button-icon-final--email:is(
+    :hover,
+    :focus-visible,
+    :active,
+    [data-state="hovered"],
+    [data-state="focused"],
+    [data-state="active"],
+    [data-state="pressed"]
+  )
+  .button-icon-final__label
+  .home-about__word {
+  animation: home-about-word-reveal 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--line-word-order, 0) * 56ms);
+}
+
 .button-icon-final__icon {
   position: relative;
   display: block;
@@ -280,12 +405,23 @@ label:hover,
   height: 16px;
 }
 
+.button-icon-final--icon .button-icon-final__icon {
+  width: 24px;
+  height: 24px;
+}
+
 .button-icon-final__icon-image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: none;
+}
+
+.button-icon-final--icon .button-icon-final__icon-image {
+  inset: 8.3333%;
+  width: auto;
+  height: auto;
 }
 
 .button-icon-final:is([data-state="pressed"], [data-state="active"], [data-state="enabled"]:active)
@@ -378,6 +514,24 @@ label:hover,
 
 .button-icon-final[data-state="enabled"][data-tone="inverse"]:active {
   background: #fff;
+}
+
+.button-icon-final[data-tone="default"] .button-icon-final__label {
+  color: var(--color-content-text-default-default);
+}
+
+.button-icon-final[data-tone="inverse"] .button-icon-final__label {
+  color: var(--color-content-icon-default-knockout);
+}
+
+.button-icon-final[data-tone="default"]:is([data-state="active"], [data-state="pressed"]) .button-icon-final__label,
+.button-icon-final[data-state="enabled"][data-tone="default"]:active .button-icon-final__label {
+  color: var(--color-content-icon-default-knockout);
+}
+
+.button-icon-final[data-tone="inverse"]:is([data-state="active"], [data-state="pressed"]) .button-icon-final__label,
+.button-icon-final[data-state="enabled"][data-tone="inverse"]:active .button-icon-final__label {
+  color: var(--color-content-text-default-default);
 }
 
 .button-icon-final[data-size="default"]:is(

@@ -18,7 +18,12 @@
   <body class="home-body">
     <main class="home-page" aria-label="Portfolio homepage">
       <section class="home-shell">
-        <header class="home-header home-header--intro" aria-label="Main header">
+        <header
+          class="home-header home-header--intro"
+          aria-label="Main header"
+          data-header-variant="desktop"
+          data-header-case="default"
+        >
           <a class="home-brand" href="./index.html" aria-label="Julian Munoz home">
             <img
               class="home-brand__logo"
@@ -29,28 +34,80 @@
             />
           </a>
           <div class="home-header__actions" aria-label="Quick actions">
-            <button class="icon-button icon-button--mail" type="button" aria-label="Email">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5v-9Z"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="m5 8 6.03 4.26a1.67 1.67 0 0 0 1.94 0L19 8"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
-              </svg>
+            <button
+              class="button-icon-final button-icon-final--email home-header__action home-header__action--email"
+              type="button"
+              aria-label="Get in Touch"
+              data-size="small"
+              data-tone="default"
+              data-state="enabled"
+            >
+              <span class="button-icon-final__state-layer" aria-hidden="true">
+                <span class="button-icon-final__content">
+                  <span class="button-icon-final__label">
+                    <span class="home-about__word" style="--line-word-order: 0"><span class="home-about__word-inner">Get</span></span>
+                    <span class="home-about__word" style="--line-word-order: 1"><span class="home-about__word-inner">in</span></span>
+                    <span class="home-about__word" style="--line-word-order: 2"><span class="home-about__word-inner">Touch</span></span>
+                  </span>
+                  <span class="button-icon-final__icon">
+                    <svg
+                      class="button-icon-final__icon-image button-icon-final__icon-image--small-dark"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5v-9Z"
+                        stroke="#202020"
+                        stroke-width="1.5"
+                      />
+                      <path d="m5 8 6.03 4.26a1.67 1.67 0 0 0 1.94 0L19 8" stroke="#202020" stroke-width="1.5" />
+                    </svg>
+                    <svg
+                      class="button-icon-final__icon-image button-icon-final__icon-image--small-light"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5v-9Z"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                      <path d="m5 8 6.03 4.26a1.67 1.67 0 0 0 1.94 0L19 8" stroke="#ffffff" stroke-width="1.5" />
+                    </svg>
+                  </span>
+                </span>
+              </span>
             </button>
-            <button class="icon-button icon-button--theme" type="button" aria-label="Theme">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M14.64 3.45a8.5 8.5 0 1 0 5.91 11.91A7 7 0 0 1 14.64 3.45Z"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
-              </svg>
+            <button
+              class="button-icon-final home-header__action home-header__action--theme"
+              type="button"
+              aria-label="Theme"
+              data-size="small"
+              data-tone="default"
+              data-state="enabled"
+            >
+              <span class="button-icon-final__state-layer" aria-hidden="true">
+                <span class="button-icon-final__icon">
+                  <svg
+                    class="button-icon-final__icon-image button-icon-final__icon-image--small-dark"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M14.64 3.45a8.5 8.5 0 1 0 5.91 11.91A7 7 0 0 1 14.64 3.45Z" stroke="#202020" stroke-width="1.5" />
+                  </svg>
+                  <svg
+                    class="button-icon-final__icon-image button-icon-final__icon-image--small-light"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M14.64 3.45a8.5 8.5 0 1 0 5.91 11.91A7 7 0 0 1 14.64 3.45Z" stroke="#ffffff" stroke-width="1.5" />
+                  </svg>
+                </span>
+              </span>
             </button>
           </div>
         </header>
@@ -92,6 +149,16 @@
               <span class="home-about__reveal-line home-about__reveal-line--inline" style="--reveal-index: 5">More About Me</span>
             </a>
           </section>
+
+          <section class="home-case-details" id="home-case-details" aria-label="Hovered case study details">
+            <h2 class="home-case-details__title" id="home-case-title">{title}</h2>
+            <p class="home-case-details__description" id="home-case-description">{description}</p>
+            <p class="home-case-details__tags" id="home-case-tags">{tag 1}, {tag 2}, {tag 3}</p>
+          </section>
+
+          <figure class="home-mini-thumbnail" id="home-mini-thumbnail" aria-label="Hovered case study preview">
+            <img class="home-mini-thumbnail__image" id="home-mini-thumbnail-image" src="" alt="" loading="lazy" decoding="async" />
+          </figure>
 
           <section class="home-projects home-projects--delayed" aria-label="Case studies">
             <ol class="project-list" id="project-list"></ol>

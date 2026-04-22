@@ -99,7 +99,7 @@
       );
 
       if (Number.isFinite(lastParagraphLastOrder)) {
-        const moreAboutStartOrder = Math.max(0, lastParagraphLastOrder - (moreAboutWords.length - 1));
+        const moreAboutStartOrder = Math.max(0, lastParagraphLastOrder + descriptionPauseSteps + 1);
 
         moreAboutWords.forEach((word, index) => {
           word.style.setProperty("--word-order", String(moreAboutStartOrder + index));
@@ -215,12 +215,59 @@
     subtitleLine.textContent = greetingSubtitle;
   };
 
+  const initHeaderVariants = () => {
+    const headers = Array.from(document.querySelectorAll(".home-header"));
+
+    if (headers.length === 0) {
+      return {
+        setProjectHoverActive: () => {},
+      };
+    }
+
+    const applyHeaderCase = (header, nextCase) => {
+      header.dataset.headerCase = nextCase;
+
+      const headerActions = Array.from(header.querySelectorAll(".home-header__action.button-icon-final"));
+      headerActions.forEach((action) => {
+        action.dataset.tone = nextCase;
+      });
+    };
+
+    const headerMeta = headers.map((header) => {
+      const baseCase = header.dataset.headerCase === "inverse" ? "inverse" : "default";
+      const headerVariant = header.dataset.headerVariant === "mobile" ? "mobile" : "desktop";
+
+      header.dataset.headerCase = baseCase;
+      header.dataset.headerVariant = headerVariant;
+
+      applyHeaderCase(header, baseCase);
+
+      return {
+        header,
+        baseCase,
+      };
+    });
+
+    return {
+      setProjectHoverActive: (isActive) => {
+        headerMeta.forEach(({ header, baseCase }) => {
+          applyHeaderCase(header, isActive ? "inverse" : baseCase);
+        });
+      },
+    };
+  };
+
+  const headerVariantController = initHeaderVariants();
   setGreetingMessageByLocalTime();
   initAboutWordReveal();
   syncShellIntroToGreetingEnd();
 
   const projects = Array.isArray(window.homeProjects) ? window.homeProjects : [];
   const list = document.getElementById("project-list");
+  const caseTitleElement = document.getElementById("home-case-title");
+  const caseDescriptionElement = document.getElementById("home-case-description");
+  const caseTagsElement = document.getElementById("home-case-tags");
+  const miniThumbnailImage = document.getElementById("home-mini-thumbnail-image");
 
   if (!list || projects.length === 0) {
     return;
@@ -276,29 +323,41 @@
       `;
     })
     .join("");
+  revealProjectListAfterFirstAboutParagraph();
 
   const pageRoot = document.body;
+  const projectById = new Map(projects.map((project) => [String(project.id || ""), project]));
   const thumbnailByProjectId = {
-    "01": "./assets/projects/project-01/thumbnail_delta-desktop.jpg",
-    "02": "./assets/projects/project-02/thumbnail_modelorama-desktop.jpg",
-    "03": "./assets/projects/project-03/thumbnail_toyota-desktop.jpg",
-    "04": "./assets/projects/project-04/thumbnail_boats-desktop.jpg",
-    "05": "./assets/projects/project-05/thumbnail_heru-desktop.jpg",
-    "06": "./assets/projects/project-06/thumbnail_rocket-desktop.jpg",
-    "07": "./assets/projects/project-07/thumbnail_just-be-desktop.jpg",
+    "01": "./assets/projects/1-delta/thumbnail_delta-desktop.jpg",
+    "02": "./assets/projects/2-abinbev/thumbnail_modelorama-desktop.jpg",
+    "03": "./assets/projects/3-toyota/thumbnail_toyota-desktop.jpg",
+    "04": "./assets/projects/4-boats-group/thumbnail_boats-desktop.jpg",
+    "05": "./assets/projects/5-heru/thumbnail_heru-desktop.jpg",
+    "06": "./assets/projects/6-rocket/thumbnail_rocket-desktop.jpg",
+    "07": "./assets/projects/7-just-be/thumbnail_just-be-desktop.jpg",
   };
-
   const projectLinks = Array.from(list.querySelectorAll(".project-item__link"));
-  revealProjectListAfterFirstAboutParagraph();
   const projectMetaByLink = new Map();
 
   projectLinks.forEach((link, index) => {
     const item = link.closest(".project-item");
     const projectId = item?.dataset.projectId;
+    const projectData = projectId ? projectById.get(projectId) : null;
     const src = projectId ? thumbnailByProjectId[projectId] : null;
+    const tags = Array.isArray(projectData?.tags)
+      ? projectData.tags.filter((tag) => typeof tag === "string" && tag.trim().length > 0).map((tag) => tag.trim())
+      : [];
 
     if (projectId && src) {
-      projectMetaByLink.set(link, { id: projectId, src, index });
+      projectMetaByLink.set(link, {
+        id: projectId,
+        src,
+        index,
+        title: String(projectData?.title || "{title}"),
+        description: String(projectData?.description || "{description}"),
+        tags,
+        miniSrc: String(projectData?.miniThumbnailSrc || src),
+      });
     }
   });
 
@@ -320,19 +379,115 @@
     pageRoot.append(stage);
   }
 
-  const layers = Array.from(stage.querySelectorAll(".project-thumbnail"));
-
-  if (layers.length < 2) {
-    return;
+  while (stage.querySelectorAll(".project-thumbnail").length < 2) {
+    const thumbnail = document.createElement("img");
+    thumbnail.className = "project-thumbnail";
+    thumbnail.alt = "";
+    stage.append(thumbnail);
   }
 
-  const motionClasses = ["is-enter-from-top", "is-enter-from-bottom", "is-exit-to-top", "is-exit-to-bottom"];
-  let activeProjectId = null;
-  let activeIndex = -1;
-  let activeLayerIndex = 0;
+  const layers = Array.from(stage.querySelectorAll(".project-thumbnail"));
 
-  const clearMotionClasses = (node) => {
-    motionClasses.forEach((className) => node.classList.remove(className));
+  let hoverToken = 0;
+  let activeProjectId = null;
+  let activeLayerIndex = 0;
+  const preloadPromisesBySrc = new Map();
+
+  const preloadThumbnail = (src) => {
+    if (!src) {
+      return Promise.resolve();
+    }
+
+    if (preloadPromisesBySrc.has(src)) {
+      return preloadPromisesBySrc.get(src);
+    }
+
+    const preloadPromise = new Promise((resolve) => {
+      const preloader = new Image();
+      preloader.decoding = "async";
+      const done = () => resolve();
+
+      if (typeof preloader.decode === "function") {
+        preloader.src = src;
+        preloader.decode().then(done).catch(() => {
+          if (preloader.complete) {
+            done();
+            return;
+          }
+
+          preloader.addEventListener("load", done, { once: true });
+          preloader.addEventListener("error", done, { once: true });
+        });
+        return;
+      }
+
+      preloader.addEventListener("load", done, { once: true });
+      preloader.addEventListener("error", done, { once: true });
+      preloader.src = src;
+    });
+
+    preloadPromisesBySrc.set(src, preloadPromise);
+    return preloadPromise;
+  };
+
+  const waitForLayerImageReady = (image, src) =>
+    new Promise((resolve) => {
+      let settled = false;
+
+      const finish = () => {
+        if (settled) {
+          return;
+        }
+
+        settled = true;
+        resolve();
+      };
+
+      image.addEventListener("load", finish, { once: true });
+      image.addEventListener("error", finish, { once: true });
+
+      if (image.getAttribute("src") !== src) {
+        image.src = src;
+      }
+
+      if (typeof image.decode === "function") {
+        image.decode().then(finish).catch(() => {
+          if (image.complete) {
+            finish();
+          }
+        });
+      } else if (image.complete) {
+        finish();
+      }
+    });
+
+  const resetThumbnailState = (node) => {
+    node.classList.remove("is-enter-from-top", "is-enter-from-bottom", "is-exit-to-top", "is-exit-to-bottom", "is-visible");
+  };
+
+  const syncHoveredCaseMeta = (meta) => {
+    if (caseTitleElement) {
+      caseTitleElement.textContent = meta?.title || "{title}";
+    }
+
+    if (caseDescriptionElement) {
+      caseDescriptionElement.textContent = meta?.description || "{description}";
+    }
+
+    if (caseTagsElement) {
+      const tagList = Array.isArray(meta?.tags) && meta.tags.length > 0 ? meta.tags : ["{tag 1}", "{tag 2}", "{tag 3}"];
+      caseTagsElement.textContent = tagList.join(", ");
+    }
+
+    if (miniThumbnailImage) {
+      const nextMiniSrc = meta?.miniSrc || meta?.src || "";
+
+      if (miniThumbnailImage.getAttribute("src") !== nextMiniSrc) {
+        miniThumbnailImage.setAttribute("src", nextMiniSrc);
+      }
+
+      miniThumbnailImage.alt = meta?.title ? `${meta.title} mini thumbnail` : "";
+    }
   };
 
   const showProjectThumbnail = (meta) => {
@@ -340,47 +495,46 @@
       return;
     }
 
+    const requestToken = ++hoverToken;
+    pageRoot.classList.add("home-body--delta-thumbnail-visible");
+    headerVariantController.setProjectHoverActive(true);
+    syncHoveredCaseMeta(meta);
+
     const nextLayerIndex = 1 - activeLayerIndex;
     const incoming = layers[nextLayerIndex];
     const outgoing = activeProjectId ? layers[activeLayerIndex] : null;
-    const movingDown = activeIndex !== -1 && meta.index > activeIndex;
-    const enterClass = activeIndex === -1 ? "is-enter-from-bottom" : movingDown ? "is-enter-from-bottom" : "is-enter-from-top";
-    const exitClass = movingDown ? "is-exit-to-top" : "is-exit-to-bottom";
 
-    clearMotionClasses(incoming);
-    incoming.classList.remove("is-visible");
-    incoming.src = meta.src;
-    incoming.classList.add(enterClass);
+    void preloadThumbnail(meta.src)
+      .then(() => waitForLayerImageReady(incoming, meta.src))
+      .then(() => {
+        if (requestToken !== hoverToken || meta.id === activeProjectId) {
+          return;
+        }
 
-    if (outgoing) {
-      clearMotionClasses(outgoing);
-      outgoing.classList.remove("is-visible");
-      outgoing.classList.add(exitClass);
-    }
+        resetThumbnailState(incoming);
 
-    requestAnimationFrame(() => {
-      incoming.classList.add("is-visible");
-    });
+        if (outgoing) {
+          resetThumbnailState(outgoing);
+        }
 
-    pageRoot.classList.add("home-body--delta-thumbnail-visible");
-    activeProjectId = meta.id;
-    activeIndex = meta.index;
-    activeLayerIndex = nextLayerIndex;
+        incoming.classList.add("is-visible");
+        activeProjectId = meta.id;
+        activeLayerIndex = nextLayerIndex;
+      });
   };
 
   const hideProjectThumbnail = () => {
+    hoverToken += 1;
+    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
+    headerVariantController.setProjectHoverActive(false);
+
     if (activeProjectId === null) {
       return;
     }
 
     const outgoing = layers[activeLayerIndex];
-    clearMotionClasses(outgoing);
-    outgoing.classList.remove("is-visible");
-    outgoing.classList.add("is-exit-to-bottom");
-
-    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
+    resetThumbnailState(outgoing);
     activeProjectId = null;
-    activeIndex = -1;
   };
 
   projectLinks.forEach((link) => {
@@ -402,4 +556,5 @@
       }
     });
   });
+
 })();
