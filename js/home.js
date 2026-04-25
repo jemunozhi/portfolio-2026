@@ -6,8 +6,8 @@
       return;
     }
 
-    const introPauseSteps = 30;
-    const descriptionPauseSteps = 20;
+    const introPauseSteps = 20;
+    const descriptionPauseSteps = 10;
     let wordOrder = 0;
     let previousGroup = null;
     let previousInDescription = false;
@@ -268,6 +268,7 @@
   const caseDescriptionElement = document.getElementById("home-case-description");
   const caseTagsElement = document.getElementById("home-case-tags");
   const miniThumbnailImage = document.getElementById("home-mini-thumbnail-image");
+  const fallbackCaseTags = ["{tag}", "{tag}", "{tag}"];
 
   if (!list || projects.length === 0) {
     return;
@@ -465,6 +466,30 @@
     node.classList.remove("is-enter-from-top", "is-enter-from-bottom", "is-exit-to-top", "is-exit-to-bottom", "is-visible");
   };
 
+  const createCaseTagElement = (label) => {
+    const tagElement = document.createElement("span");
+    tagElement.className = "home-case-tag";
+
+    const stateLayer = document.createElement("span");
+    stateLayer.className = "home-case-tag__state-layer";
+
+    const tagLabel = document.createElement("span");
+    tagLabel.className = "home-case-tag__label";
+    tagLabel.textContent = label;
+
+    stateLayer.append(tagLabel);
+    tagElement.append(stateLayer);
+    return tagElement;
+  };
+
+  const renderCaseTags = (tagList) => {
+    if (!caseTagsElement) {
+      return;
+    }
+
+    caseTagsElement.replaceChildren(...tagList.map((tag) => createCaseTagElement(tag)));
+  };
+
   const syncHoveredCaseMeta = (meta) => {
     if (caseTitleElement) {
       caseTitleElement.textContent = meta?.title || "{title}";
@@ -475,8 +500,8 @@
     }
 
     if (caseTagsElement) {
-      const tagList = Array.isArray(meta?.tags) && meta.tags.length > 0 ? meta.tags : ["{tag 1}", "{tag 2}", "{tag 3}"];
-      caseTagsElement.textContent = tagList.join(", ");
+      const tagList = Array.isArray(meta?.tags) && meta.tags.length > 0 ? meta.tags : fallbackCaseTags;
+      renderCaseTags(tagList);
     }
 
     if (miniThumbnailImage) {
@@ -497,6 +522,7 @@
 
     const requestToken = ++hoverToken;
     pageRoot.classList.add("home-body--delta-thumbnail-visible");
+    pageRoot.dataset.activeProjectId = meta.id;
     headerVariantController.setProjectHoverActive(true);
     syncHoveredCaseMeta(meta);
 
@@ -526,6 +552,7 @@
   const hideProjectThumbnail = () => {
     hoverToken += 1;
     pageRoot.classList.remove("home-body--delta-thumbnail-visible");
+    delete pageRoot.dataset.activeProjectId;
     headerVariantController.setProjectHoverActive(false);
 
     if (activeProjectId === null) {

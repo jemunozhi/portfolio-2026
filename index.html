@@ -150,10 +150,20 @@
             </a>
           </section>
 
-          <section class="home-case-details" id="home-case-details" aria-label="Hovered case study details">
+          <section class="home-case-details" id="home-case-details" aria-label="Hovered case study details" data-tone="inverse">
             <h2 class="home-case-details__title" id="home-case-title">{title}</h2>
             <p class="home-case-details__description" id="home-case-description">{description}</p>
-            <p class="home-case-details__tags" id="home-case-tags">{tag 1}, {tag 2}, {tag 3}</p>
+            <div class="home-case-details__tags" id="home-case-tags" aria-label="Case study tags">
+              <span class="home-case-tag">
+                <span class="home-case-tag__state-layer"><span class="home-case-tag__label">{tag}</span></span>
+              </span>
+              <span class="home-case-tag">
+                <span class="home-case-tag__state-layer"><span class="home-case-tag__label">{tag}</span></span>
+              </span>
+              <span class="home-case-tag">
+                <span class="home-case-tag__state-layer"><span class="home-case-tag__label">{tag}</span></span>
+              </span>
+            </div>
           </section>
 
           <figure class="home-mini-thumbnail" id="home-mini-thumbnail" aria-label="Hovered case study preview">
