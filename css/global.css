@@ -165,9 +165,9 @@ body {
   color: var(--color-content-text-default-subtle);
   white-space: nowrap;
   opacity: 0;
-  transform: translateX(-50%) scale(1);
+  transform: translateX(-50%);
   transform-origin: center;
-  will-change: transform, opacity;
+  will-change: opacity;
   animation: text-intro 280ms ease-out 700ms both;
 }
 
@@ -200,7 +200,7 @@ body {
   border-radius: var(--border-radii-2xs);
   opacity: 0;
   transform: translate(-50%, 0);
-  will-change: transform, opacity;
+  will-change: opacity;
   animation: cta-intro 360ms ease-out 4980ms both;
 }
 
@@ -457,24 +457,20 @@ body {
 @keyframes text-intro {
   0% {
     opacity: 0;
-    transform: translateX(-50%) scale(0.96);
   }
 
   100% {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
   }
 }
 
 @keyframes cta-intro {
   0% {
     opacity: 0;
-    transform: translate(-50%, 8px);
   }
 
   100% {
     opacity: 1;
-    transform: translate(-50%, 0);
   }
 }
 
