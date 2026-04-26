@@ -267,8 +267,79 @@
   const caseTitleElement = document.getElementById("home-case-title");
   const caseDescriptionElement = document.getElementById("home-case-description");
   const caseTagsElement = document.getElementById("home-case-tags");
+  const caseDetailsElement = document.getElementById("home-case-details");
+  const miniThumbnailElement = document.getElementById("home-mini-thumbnail");
   const miniThumbnailImage = document.getElementById("home-mini-thumbnail-image");
   const fallbackCaseTags = ["{tag}", "{tag}", "{tag}"];
+  const caseDetailsTextIntroClassName = "home-case-details__text-intro";
+  const caseDetailsOutroClassName = "home-case-details--outro";
+  const miniThumbnailRevealActiveClassName = "home-body--mini-thumbnail-revealed";
+  const miniThumbnailLeavingClassName = "home-body--mini-thumbnail-leaving";
+  const homeReturningClassName = "home-body--returning-home";
+  const caseTitleTextDelayMs = 0;
+  const caseDescriptionTextDelayMs = 0;
+  const caseDetailsSequenceEndMs = 0;
+  const backgroundBlendClassName = "project-thumbnail-stage--blending";
+  const backgroundLayerDimmingClassName = "is-dimming";
+  const backgroundReturningHomeClassName = "project-thumbnail-stage--returning-home";
+  const backgroundTransitionDurationMs = 420;
+  const backgroundReturnTransitionDurationMs = 310;
+  const hoverContentFollowDelayMs = 60;
+
+  const restartCaseDetailsTextIntro = () => {
+    const animatedTextNodes = [
+      {
+        node: caseTitleElement,
+        delayMs: caseTitleTextDelayMs,
+      },
+      {
+        node: caseDescriptionElement,
+        delayMs: caseDescriptionTextDelayMs,
+      },
+    ].filter((entry) => Boolean(entry.node));
+
+    if (animatedTextNodes.length === 0) {
+      return;
+    }
+
+    animatedTextNodes.forEach(({ node }) => {
+      node.classList.remove(caseDetailsTextIntroClassName);
+    });
+
+    void animatedTextNodes[0].node.offsetWidth;
+
+    animatedTextNodes.forEach(({ node, delayMs }) => {
+      node.style.setProperty("--case-details-text-delay", `${delayMs}ms`);
+      node.classList.add(caseDetailsTextIntroClassName);
+    });
+  };
+
+  const updateMiniThumbnailRevealDirection = () => {
+    if (!caseDetailsElement || !miniThumbnailElement) {
+      return;
+    }
+
+    const caseRect = caseDetailsElement.getBoundingClientRect();
+    const miniRect = miniThumbnailElement.getBoundingClientRect();
+
+    if (caseRect.width <= 0 || caseRect.height <= 0 || miniRect.width <= 0 || miniRect.height <= 0) {
+      return;
+    }
+
+    const caseCenterX = caseRect.left + caseRect.width / 2;
+    const caseCenterY = caseRect.top + caseRect.height / 2;
+    const miniCenterX = miniRect.left + miniRect.width / 2;
+    const miniCenterY = miniRect.top + miniRect.height / 2;
+    const deltaX = caseCenterX - miniCenterX;
+    const deltaY = caseCenterY - miniCenterY;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      pageRoot.dataset.miniThumbnailRevealDirection = deltaX > 0 ? "right" : "left";
+      return;
+    }
+
+    pageRoot.dataset.miniThumbnailRevealDirection = deltaY > 0 ? "below" : "above";
+  };
 
   if (!list || projects.length === 0) {
     return;
@@ -376,6 +447,7 @@
     stage.innerHTML = `
       <img class="project-thumbnail" alt="" />
       <img class="project-thumbnail" alt="" />
+      <div class="project-thumbnail-blackout"></div>
     `;
     pageRoot.append(stage);
   }
@@ -387,11 +459,20 @@
     stage.append(thumbnail);
   }
 
+  if (!stage.querySelector(".project-thumbnail-blackout")) {
+    const blackoutLayer = document.createElement("div");
+    blackoutLayer.className = "project-thumbnail-blackout";
+    stage.append(blackoutLayer);
+  }
+
   const layers = Array.from(stage.querySelectorAll(".project-thumbnail"));
 
   let hoverToken = 0;
   let activeProjectId = null;
   let activeLayerIndex = 0;
+  let miniThumbnailRevealRafId = 0;
+  let hoverTransitionTimeoutId = 0;
+  let hoverContentSyncTimeoutId = 0;
   const preloadPromisesBySrc = new Map();
 
   const preloadThumbnail = (src) => {
@@ -431,6 +512,11 @@
     return preloadPromise;
   };
 
+  projectMetaByLink.forEach((meta) => {
+    void preloadThumbnail(meta.src);
+    void preloadThumbnail(meta.miniSrc);
+  });
+
   const waitForLayerImageReady = (image, src) =>
     new Promise((resolve) => {
       let settled = false;
@@ -466,9 +552,36 @@
     node.classList.remove("is-enter-from-top", "is-enter-from-bottom", "is-exit-to-top", "is-exit-to-bottom", "is-visible");
   };
 
-  const createCaseTagElement = (label) => {
+  const hideLayerImmediately = (node) => {
+    if (!node) {
+      return;
+    }
+
+    node.style.transition = "none";
+    resetThumbnailState(node);
+    void node.offsetWidth;
+    node.style.removeProperty("transition");
+  };
+
+  const clearBackgroundBlendState = () => {
+    stage.classList.remove(backgroundBlendClassName);
+    stage.classList.remove(backgroundReturningHomeClassName);
+    layers.forEach((layer) => {
+      layer.classList.remove(backgroundLayerDimmingClassName);
+    });
+  };
+
+  const restartBackgroundBlend = () => {
+    stage.classList.remove(backgroundBlendClassName);
+    void stage.offsetWidth;
+    stage.classList.add(backgroundBlendClassName);
+  };
+
+  const createCaseTagElement = (label, order = 0, textRevealDurationMs = 0) => {
     const tagElement = document.createElement("span");
-    tagElement.className = "home-case-tag";
+    tagElement.className = "home-case-tag home-case-tag--reveal";
+    tagElement.style.setProperty("--case-tag-order", String(order));
+    tagElement.style.setProperty("--case-tag-start-delay", `${Math.max(0, Math.round(textRevealDurationMs))}ms`);
 
     const stateLayer = document.createElement("span");
     stateLayer.className = "home-case-tag__state-layer";
@@ -482,12 +595,12 @@
     return tagElement;
   };
 
-  const renderCaseTags = (tagList) => {
+  const renderCaseTags = (tagList, textRevealDurationMs = 0) => {
     if (!caseTagsElement) {
       return;
     }
 
-    caseTagsElement.replaceChildren(...tagList.map((tag) => createCaseTagElement(tag)));
+    caseTagsElement.replaceChildren(...tagList.map((tag, index) => createCaseTagElement(tag, index, textRevealDurationMs)));
   };
 
   const syncHoveredCaseMeta = (meta) => {
@@ -499,9 +612,11 @@
       caseDescriptionElement.textContent = meta?.description || "{description}";
     }
 
+    restartCaseDetailsTextIntro();
+
     if (caseTagsElement) {
       const tagList = Array.isArray(meta?.tags) && meta.tags.length > 0 ? meta.tags : fallbackCaseTags;
-      renderCaseTags(tagList);
+      renderCaseTags(tagList, caseDetailsSequenceEndMs);
     }
 
     if (miniThumbnailImage) {
@@ -515,53 +630,232 @@
     }
   };
 
+  const clearHoverTransitionTimeout = () => {
+    if (!hoverTransitionTimeoutId) {
+      return;
+    }
+
+    window.clearTimeout(hoverTransitionTimeoutId);
+    hoverTransitionTimeoutId = 0;
+  };
+
+  const clearHoverContentSyncTimeout = () => {
+    if (!hoverContentSyncTimeoutId) {
+      return;
+    }
+
+    window.clearTimeout(hoverContentSyncTimeoutId);
+    hoverContentSyncTimeoutId = 0;
+  };
+
+  const resetCaseDetailsTextIntroState = () => {
+    if (caseTitleElement) {
+      caseTitleElement.style.removeProperty("--case-details-text-delay");
+      caseTitleElement.classList.remove(caseDetailsTextIntroClassName);
+    }
+
+    if (caseDescriptionElement) {
+      caseDescriptionElement.style.removeProperty("--case-details-text-delay");
+      caseDescriptionElement.classList.remove(caseDetailsTextIntroClassName);
+    }
+  };
+
+  const clearHoverOutroState = () => {
+    pageRoot.classList.remove(miniThumbnailLeavingClassName);
+    pageRoot.classList.remove(homeReturningClassName);
+
+    if (caseDetailsElement) {
+      caseDetailsElement.classList.remove(caseDetailsOutroClassName);
+    }
+  };
+
+  const startHoverOutroState = ({ isReturningHome = false } = {}) => {
+    pageRoot.classList.remove(miniThumbnailRevealActiveClassName);
+    pageRoot.classList.add(miniThumbnailLeavingClassName);
+    pageRoot.classList.toggle(homeReturningClassName, isReturningHome);
+
+    if (caseDetailsElement) {
+      caseDetailsElement.classList.add(caseDetailsOutroClassName);
+    }
+  };
+
+  const queueMiniThumbnailReveal = () => {
+    if (miniThumbnailRevealRafId) {
+      cancelAnimationFrame(miniThumbnailRevealRafId);
+    }
+
+    miniThumbnailRevealRafId = requestAnimationFrame(() => {
+      miniThumbnailRevealRafId = requestAnimationFrame(() => {
+        miniThumbnailRevealRafId = 0;
+
+        if (!pageRoot.classList.contains("home-body--delta-thumbnail-visible")) {
+          return;
+        }
+
+        pageRoot.classList.add(miniThumbnailRevealActiveClassName);
+      });
+    });
+  };
+
+  const applyProjectHoverState = (meta) => {
+    pageRoot.classList.add("home-body--delta-thumbnail-visible");
+    clearHoverOutroState();
+    pageRoot.classList.remove(miniThumbnailRevealActiveClassName);
+    pageRoot.dataset.activeProjectId = meta.id;
+    headerVariantController.setProjectHoverActive(true);
+    syncHoveredCaseMeta(meta);
+    updateMiniThumbnailRevealDirection();
+    queueMiniThumbnailReveal();
+  };
+
+  const finalizeHideProjectThumbnail = () => {
+    clearHoverContentSyncTimeout();
+    clearHoverOutroState();
+    pageRoot.classList.remove(miniThumbnailRevealActiveClassName);
+    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
+    delete pageRoot.dataset.activeProjectId;
+    delete pageRoot.dataset.miniThumbnailRevealDirection;
+    resetCaseDetailsTextIntroState();
+
+    if (activeProjectId !== null) {
+      const outgoing = layers[activeLayerIndex];
+      hideLayerImmediately(outgoing);
+      activeProjectId = null;
+    }
+
+    clearBackgroundBlendState();
+  };
+
   const showProjectThumbnail = (meta) => {
-    if (!meta || meta.id === activeProjectId) {
+    if (!meta) {
+      return;
+    }
+
+    const currentProjectId = pageRoot.dataset.activeProjectId || null;
+    if (currentProjectId === meta.id) {
       return;
     }
 
     const requestToken = ++hoverToken;
-    pageRoot.classList.add("home-body--delta-thumbnail-visible");
-    pageRoot.dataset.activeProjectId = meta.id;
-    headerVariantController.setProjectHoverActive(true);
-    syncHoveredCaseMeta(meta);
+    clearHoverTransitionTimeout();
+    clearHoverContentSyncTimeout();
+
+    const isSwitchingBetweenCases =
+      pageRoot.classList.contains("home-body--delta-thumbnail-visible") && Boolean(currentProjectId);
+
+    if (isSwitchingBetweenCases) {
+      stage.classList.remove(backgroundBlendClassName);
+      stage.classList.remove(backgroundReturningHomeClassName);
+    } else {
+      clearBackgroundBlendState();
+    }
 
     const nextLayerIndex = 1 - activeLayerIndex;
     const incoming = layers[nextLayerIndex];
     const outgoing = activeProjectId ? layers[activeLayerIndex] : null;
 
-    void preloadThumbnail(meta.src)
-      .then(() => waitForLayerImageReady(incoming, meta.src))
-      .then(() => {
-        if (requestToken !== hoverToken || meta.id === activeProjectId) {
+    if (!isSwitchingBetweenCases) {
+      applyProjectHoverState(meta);
+    }
+
+    void Promise.all([preloadThumbnail(meta.src), waitForLayerImageReady(incoming, meta.src)]).then(() => {
+      if (requestToken !== hoverToken || meta.id === activeProjectId) {
+        return;
+      }
+
+      hideLayerImmediately(incoming);
+
+      if (isSwitchingBetweenCases) {
+        if (outgoing) {
+          outgoing.classList.add(backgroundLayerDimmingClassName);
+        }
+
+        restartBackgroundBlend();
+
+        hoverContentSyncTimeoutId = window.setTimeout(() => {
+          hoverContentSyncTimeoutId = 0;
+
+          if (requestToken !== hoverToken) {
+            return;
+          }
+
+          startHoverOutroState();
+
+          requestAnimationFrame(() => {
+            if (requestToken !== hoverToken) {
+              return;
+            }
+
+            applyProjectHoverState(meta);
+          });
+        }, hoverContentFollowDelayMs);
+      }
+
+      incoming.classList.add("is-visible");
+
+      hoverTransitionTimeoutId = window.setTimeout(() => {
+        hoverTransitionTimeoutId = 0;
+
+        if (requestToken !== hoverToken) {
           return;
         }
 
-        resetThumbnailState(incoming);
-
         if (outgoing) {
-          resetThumbnailState(outgoing);
+          hideLayerImmediately(outgoing);
         }
 
-        incoming.classList.add("is-visible");
+        clearBackgroundBlendState();
         activeProjectId = meta.id;
         activeLayerIndex = nextLayerIndex;
-      });
+      }, backgroundTransitionDurationMs);
+    });
   };
 
   const hideProjectThumbnail = () => {
-    hoverToken += 1;
-    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
-    delete pageRoot.dataset.activeProjectId;
-    headerVariantController.setProjectHoverActive(false);
+    const requestToken = ++hoverToken;
+    clearHoverTransitionTimeout();
+    clearHoverContentSyncTimeout();
+    clearBackgroundBlendState();
 
-    if (activeProjectId === null) {
+    if (miniThumbnailRevealRafId) {
+      cancelAnimationFrame(miniThumbnailRevealRafId);
+      miniThumbnailRevealRafId = 0;
+    }
+
+    if (!pageRoot.classList.contains("home-body--delta-thumbnail-visible")) {
+      finalizeHideProjectThumbnail();
+      headerVariantController.setProjectHoverActive(false);
       return;
     }
 
-    const outgoing = layers[activeLayerIndex];
-    resetThumbnailState(outgoing);
-    activeProjectId = null;
+    const outgoing = activeProjectId ? layers[activeLayerIndex] : null;
+    if (outgoing) {
+      outgoing.classList.add(backgroundLayerDimmingClassName);
+    }
+
+    stage.classList.add(backgroundReturningHomeClassName);
+    restartBackgroundBlend();
+
+    hoverContentSyncTimeoutId = window.setTimeout(() => {
+      hoverContentSyncTimeoutId = 0;
+
+      if (requestToken !== hoverToken) {
+        return;
+      }
+
+      startHoverOutroState({ isReturningHome: true });
+    }, hoverContentFollowDelayMs);
+
+    hoverTransitionTimeoutId = window.setTimeout(() => {
+      hoverTransitionTimeoutId = 0;
+
+      if (requestToken !== hoverToken) {
+        return;
+      }
+
+      finalizeHideProjectThumbnail();
+      headerVariantController.setProjectHoverActive(false);
+    }, backgroundReturnTransitionDurationMs);
   };
 
   projectLinks.forEach((link) => {
