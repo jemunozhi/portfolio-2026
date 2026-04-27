@@ -116,15 +116,28 @@
 
 .home-brand {
   display: inline-flex;
+  position: relative;
   width: var(--header-logo-size);
   height: var(--header-logo-size);
   color: inherit;
 }
 
 .home-brand__logo {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.home-brand__logo--default {
+  opacity: 1;
+}
+
+.home-brand__logo--inverse {
+  opacity: 0;
 }
 
 .home-header__actions {
@@ -174,8 +187,12 @@
   color: var(--color-content-icon-default-knockout);
 }
 
-.home-header[data-header-case="inverse"] .home-brand__logo {
-  filter: brightness(0) saturate(100%) invert(100%);
+.home-header[data-header-case="inverse"] .home-brand__logo--default {
+  opacity: 0;
+}
+
+.home-header[data-header-case="inverse"] .home-brand__logo--inverse {
+  opacity: 1;
 }
 
 .home-header[data-header-case="inverse"][data-header-variant="desktop"] {
@@ -263,8 +280,8 @@
   visibility: visible;
   transform: translate3d(0, 0, 0);
   transition:
-    opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
     visibility 0s linear 0s;
 }
 
@@ -509,11 +526,6 @@
   animation-delay: calc(var(--case-tag-order, 0) * 20ms);
 }
 
-.home-body--delta-thumbnail-visible.home-body--returning-home .home-case-details {
-  --case-details-outro-duration: 250ms;
-  --case-tag-outro-duration: 210ms;
-}
-
 .home-body--delta-thumbnail-visible .home-about {
   opacity: 0;
   visibility: hidden;
@@ -554,11 +566,6 @@
   transition:
     clip-path var(--mini-thumbnail-leave-duration) var(--mini-thumbnail-reveal-ease),
     opacity var(--mini-thumbnail-leave-opacity-duration) var(--mini-thumbnail-reveal-ease);
-}
-
-.home-body--delta-thumbnail-visible.home-body--returning-home .home-mini-thumbnail {
-  --mini-thumbnail-leave-duration: 250ms;
-  --mini-thumbnail-leave-opacity-duration: 180ms;
 }
 
 .home-body--delta-thumbnail-visible.home-body--mini-thumbnail-revealed .home-mini-thumbnail__image {
@@ -1141,8 +1148,8 @@
 }
 
 .project-thumbnail-stage--returning-home {
-  --project-thumbnail-transition-duration: 310ms;
-  --project-thumbnail-overlay-peak-opacity: 0.64;
+  --project-thumbnail-transition-duration: 420ms;
+  --project-thumbnail-overlay-peak-opacity: 0.6;
 }
 
 .project-thumbnail {
@@ -1227,10 +1234,6 @@
 
 .project-thumbnail-stage--blending .project-thumbnail-blackout {
   animation: project-thumbnail-blackout-pulse var(--project-thumbnail-transition-duration) var(--project-thumbnail-transition-ease) both;
-}
-
-.project-thumbnail-stage--blending.project-thumbnail-stage--returning-home .project-thumbnail-blackout {
-  animation-name: project-thumbnail-blackout-pulse-return-home;
 }
 
 .project-thumbnail.is-enter-from-bottom {

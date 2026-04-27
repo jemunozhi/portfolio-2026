@@ -283,7 +283,7 @@
   const backgroundLayerDimmingClassName = "is-dimming";
   const backgroundReturningHomeClassName = "project-thumbnail-stage--returning-home";
   const backgroundTransitionDurationMs = 420;
-  const backgroundReturnTransitionDurationMs = 310;
+  const backgroundReturnTransitionDurationMs = 420;
   const hoverContentFollowDelayMs = 60;
 
   const restartCaseDetailsTextIntro = () => {
@@ -708,20 +708,25 @@
     queueMiniThumbnailReveal();
   };
 
+  const startHomeReentryState = () => {
+    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
+    delete pageRoot.dataset.activeProjectId;
+    delete pageRoot.dataset.miniThumbnailRevealDirection;
+  };
+
   const finalizeHideProjectThumbnail = () => {
     clearHoverContentSyncTimeout();
     clearHoverOutroState();
     pageRoot.classList.remove(miniThumbnailRevealActiveClassName);
-    pageRoot.classList.remove("home-body--delta-thumbnail-visible");
-    delete pageRoot.dataset.activeProjectId;
-    delete pageRoot.dataset.miniThumbnailRevealDirection;
+    startHomeReentryState();
     resetCaseDetailsTextIntroState();
 
-    if (activeProjectId !== null) {
-      const outgoing = layers[activeLayerIndex];
-      hideLayerImmediately(outgoing);
-      activeProjectId = null;
-    }
+    layers.forEach((layer) => {
+      hideLayerImmediately(layer);
+    });
+
+    activeProjectId = null;
+    activeLayerIndex = 0;
 
     clearBackgroundBlendState();
   };
@@ -828,10 +833,10 @@
       return;
     }
 
-    const outgoing = activeProjectId ? layers[activeLayerIndex] : null;
-    if (outgoing) {
-      outgoing.classList.add(backgroundLayerDimmingClassName);
-    }
+    const outgoingLayers = layers.filter((layer) => layer.classList.contains("is-visible"));
+    outgoingLayers.forEach((layer) => {
+      layer.classList.add(backgroundLayerDimmingClassName);
+    });
 
     stage.classList.add(backgroundReturningHomeClassName);
     restartBackgroundBlend();
